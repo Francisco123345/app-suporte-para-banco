@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central Única de Suporte Bancário e Reembolsos do Brasil</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            gold: '#f59e0b',
+                            green: '#10b981',
+                            blue: '#3b82f6',
+                            red: '#ef4444'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #09090b;
+        }
+        /* Custom scrollbar for dark cards */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #18181b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3f3f46;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #52525b;
+        }
+        .glow-border {
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+        }
+        .print-only {
+            display: none;
+        }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printArea, #printArea * {
+                visibility: visible;
+            }
+            #printArea {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                color: #000;
+                background: #fff;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white text-zinc-900 min-h-screen flex flex-col selection:bg-zinc-800 selection:text-white">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-zinc-900 text-zinc-300 text-xs py-2 px-4 border-b border-zinc-800">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse mr-1.5"></span>
+                    MED PIX Ativo
+                </span>
+                <span>Mecanismo Especial de Devolução Regulamentado pelo BACEN (Resolução BCB nº 103)</span>
+            </div>
+            <div class="flex items-center gap-4 text-xs">
+                <span class="hidden md:inline text-zinc-400">Prazo Legal Contestações: 80 dias</span>
+                <a href="#calculadora" class="text-amber-400 hover:underline flex items-center gap-1 font-medium">
+                    Calculadora CDC Art. 42
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-zinc-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 bg-zinc-900 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg border border-zinc-800">
+                    <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-extrabold text-lg text-zinc-900 tracking-tight leading-tight">FinSuporte <span class="text-emerald-600">Brasil</span></h1>
+                        <span class="bg-zinc-900 text-white text-[10px] font-bold px-2 py-0.5 rounded border border-zinc-700">OFICIAL</span>
+                    </div>
+                    <p class="text-xs text-zinc-500">Central Unificada de Suporte Bancário & Reembolsos</p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+                <a href="#bancos" class="text-zinc-700 hover:text-zinc-900 transition">22 Bancos</a>
+                <a href="#calculadora" class="text-zinc-700 hover:text-zinc-900 transition">Calculadora CDC</a>
+                <a href="#notificacao" class="text-zinc-700 hover:text-zinc-900 transition">Notificação Legal</a>
+                <a href="#meus-protocolos" class="text-zinc-700 hover:text-zinc-900 transition relative">
+                    Meus Chamados
+                    <span id="chamadosBadge" class="hidden absolute -top-2 -right-3 bg-emerald-500 text-zinc-950 font-bold text-[10px] px-1.5 py-0.2 rounded-full">0</span>
+                </a>
+            </nav>
+
+            <!-- CTA Button -->
+            <div class="flex items-center gap-3">
+                <button onclick="openWizardModal()" class="bg-zinc-900 hover:bg-zinc-800 text-white font-semibold text-sm px-5 py-2.5 rounded-xl border border-zinc-700 shadow-lg shadow-zinc-900/10 transition flex items-center gap-2 hover:scale-[1.02] active:scale-95">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    Abrir Reembolso
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="py-12 md:py-16 bg-white relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <!-- Hero Container Card - Black Box -->
+            <div class="bg-zinc-900 rounded-3xl border border-zinc-800 p-8 md:p-12 text-white shadow-2xl relative overflow-hidden">
+                <!-- Background decorative elements -->
+                <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-20 -top-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="inline-flex items-center gap-2 bg-zinc-800/80 border border-zinc-700 rounded-full px-4 py-1.5 text-xs text-zinc-300">
+                            <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 1.8l2.36 5.25 5.73.52-4.31 3.86 1.25 5.61L10 14.1l-5.03 2.94 1.25-5.61L1.91 7.57l5.73-.52L10 1.8z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Plataforma Integrada a Normas BACEN & CDC</span>
+                        </div>
+
+                        <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                            Recupere seus valores cobrados indevidamente ou no PIX
+                        </h2>
+
+                        <p class="text-zinc-300 text-base md:text-lg leading-relaxed">
+                            Acompanhe procedimentos diretos para os <strong class="text-white font-semibold">22 maiores bancos do Brasil</strong>. Suporte rápido para contestação de fraudes no PIX (MED), cobrança indevida em dobro (CDC Art. 42), empréstimos não autorizados e cartões clonados.
+                        </p>
+
+                        <div class="flex flex-wrap items-center gap-4 pt-2">
+                            <button onclick="openWizardModal()" class="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold px-6 py-3.5 rounded-xl shadow-lg shadow-emerald-500/20 transition flex items-center gap-2 text-sm sm:text-base">
+                                Solicitante de Reembolso Express
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                </svg>
+                            </button>
+                            <a href="#bancos" class="bg-zinc-800 hover:bg-zinc-700 text-white font-semibold px-6 py-3.5 rounded-xl border border-zinc-700 transition text-sm sm:text-base">
+                                Consultar 22 Bancos
+                            </a>
+                        </div>
+
+                        <!-- Mini Stats Grid inside Hero -->
+                        <div class="grid grid-cols-3 gap-4 pt-6 border-t border-zinc-800/80">
+                            <div>
+                                <p class="text-2xl font-extrabold text-white">R$ 14.2M+</p>
+                                <p class="text-xs text-zinc-400">Restituídos aos clientes</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-extrabold text-emerald-400">94.8%</p>
+                                <p class="text-xs text-zinc-400">Taxa de resolução</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-extrabold text-amber-400">22 Bancos</p>
+                                <p class="text-xs text-zinc-400">Canais diretos 0800</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Real Support Team Photo Card -->
+                    <div class="lg:col-span-5">
+                        <div class="bg-zinc-950 p-6 rounded-2xl border border-zinc-800 shadow-2xl relative">
+                            <div class="relative rounded-xl overflow-hidden mb-4 border border-zinc-800">
+                                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80" alt="Atendimento Bancário" class="w-full h-56 object-cover object-center transform hover:scale-105 transition duration-500">
+                                <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent"></div>
+                                <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs">
+                                    <span class="bg-emerald-500/90 text-zinc-950 font-bold px-2.5 py-1 rounded-md">Atendimento Verificado</span>
+                                    <span class="text-zinc-300 font-medium bg-zinc-900/80 px-2 py-1 rounded border border-zinc-700">BACEN Res. 103</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3 text-xs text-zinc-300">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">1</div>
+                                    <p><strong class="text-white">Golpe do PIX (MED):</strong> Acionamento em até 80 dias para bloqueio de conta destino.</p>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">2</div>
+                                    <p><strong class="text-white">CDC Artigo 42:</strong> Devolução em DOBRO de tarifas e juros indevidos.</p>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold">3</div>
+                                    <p><strong class="text-white">Súmula 479 STJ:</strong> Responsabilidade objetiva das instituições financeiras.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bank Catalog Section -->
+    <section id="bancos" class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Section Header -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                <div>
+                    <span class="text-xs font-bold text-emerald-600 tracking-wider uppercase">Diretório Oficial de Suporte</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-900">Catálogo dos 22 Maiores Bancos do Brasil</h2>
+                    <p class="text-sm text-zinc-600 mt-1">Acesse canais diretos de contestação, SAC 0800, Ouvidoria e solicite seu reembolso.</p>
+                </div>
+
+                <!-- Search and Filters -->
+                <div class="w-full md:w-auto flex flex-col sm:flex-row items-center gap-3">
+                    <div class="relative w-full sm:w-72">
+                        <input type="text" id="bankSearch" oninput="filterBanks()" placeholder="Buscar banco ou código BACEN..." class="w-full bg-zinc-900 border border-zinc-800 text-white placeholder-zinc-400 text-sm rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <svg class="w-4 h-4 text-zinc-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Pills -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-4 mb-6 text-xs no-scrollbar">
+                <button onclick="filterCategory('all')" class="bank-cat-btn active bg-zinc-900 text-white px-4 py-2 rounded-xl font-medium whitespace-nowrap border border-zinc-800 hover:border-zinc-700 transition">Todos (22)</button>
+                <button onclick="filterCategory('digital')" class="bank-cat-btn bg-zinc-100 text-zinc-700 px-4 py-2 rounded-xl font-medium whitespace-nowrap border border-zinc-200 hover:bg-zinc-200 transition">Digitais & FinTechs</button>
+                <button onclick="filterCategory('tradicional')" class="bank-cat-btn bg-zinc-100 text-zinc-700 px-4 py-2 rounded-xl font-medium whitespace-nowrap border border-zinc-200 hover:bg-zinc-200 transition">Bancos Tradicionais</button>
+                <button onclick="filterCategory('cooperativa')" class="bank-cat-btn bg-zinc-100 text-zinc-700 px-4 py-2 rounded-xl font-medium whitespace-nowrap border border-zinc-200 hover:bg-zinc-200 transition">Cooperativas</button>
+                <button onclick="filterCategory('investimento')" class="bank-cat-btn bg-zinc-100 text-zinc-700 px-4 py-2 rounded-xl font-medium whitespace-nowrap border border-zinc-200 hover:bg-zinc-200 transition">Investimentos</button>
+            </div>
+
+            <!-- Bank Grid Container -->
+            <div id="bankGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- JavaScript will populate 22 bank cards here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- CDC Calculator Section -->
+    <section id="calculadora" class="py-16 bg-white border-t border-zinc-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-zinc-900 rounded-3xl border border-zinc-800 p-8 sm:p-10 text-white shadow-2xl relative overflow-hidden">
+                <div class="max-w-3xl">
+                    <span class="inline-block bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold text-xs px-3 py-1 rounded-full mb-3">
+                        DIREITO DO CONSUMIDOR (CDC ART. 42)
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Calculadora de Restituição em Dobro + Juros</h2>
+                    <p class="text-zinc-400 text-sm mt-2">
+                        Cobranças indevidas de tarifas de cadastro, seguros não solicitados ou taxas duplicadas devem ser devolvidas em <strong>dobro</strong> acrescidas de correção monetária (Súmula 54/STJ).
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8 items-start">
+                    <!-- Calculator Form Inputs -->
+                    <div class="lg:col-span-7 bg-zinc-950 p-6 rounded-2xl border border-zinc-800 space-y-5">
+                        <div>
+                            <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Valor Cobrado Indevidamente (R$)</label>
+                            <div class="relative">
+                                <span class="absolute left-3.5 top-2.5 text-zinc-400 font-semibold text-sm">R$</span>
+                                <input type="number" id="calcAmount" value="350.00" step="0.01" oninput="calculateDoubleRefund()" class="w-full bg-zinc-900 border border-zinc-700 text-white rounded-xl pl-10 pr-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-amber-400">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Meses Decorridos da Cobrança</label>
+                                <input type="number" id="calcMonths" value="6" min="1" max="60" oninput="calculateDoubleRefund()" class="w-full bg-zinc-900 border border-zinc-700 text-white rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-amber-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Taxa de Juros de Mora Estimada</label>
+                                <select id="calcInterestRate" onchange="calculateDoubleRefund()" class="w-full bg-zinc-900 border border-zinc-700 text-white rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-amber-400">
+                                    <option value="0.01" selected>1% ao mês (Legal Padrão)</option>
+                                    <option value="0.012">1.2% ao mês (Selic Estimada)</option>
+                                    <option value="0.005">0.5% ao mês (Mínima)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-zinc-300 mb-1.5">Tipo de Irregularidade</label>
+                            <select id="calcReason" onchange="calculateDoubleRefund()" class="w-full bg-zinc-900 border border-zinc-700 text-white rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-amber-400">
+                                <option value="Tarifa de Manutenção Indevida">Tarifa de Manutenção de Conta Indevida</option>
+                                <option value="Venda Casada de Seguro">Venda Casada de Seguro Não Solicitado</option>
+                                <option value="Anuidade de Cartão Não Autorizado">Anuidade de Cartão Não Autorizado</option>
+                                <option value="Juros Excessivos / Duplicados">Juros ou Encargos Duplicados</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Calculator Results Box -->
+                    <div class="lg:col-span-5 bg-gradient-to-b from-zinc-950 to-zinc-900 p-6 rounded-2xl border border-zinc-800 flex flex-col justify-between h-full">
+                        <div>
+                            <h3 class="text-xs uppercase tracking-wider font-bold text-zinc-400 mb-4">Resultado Estimado da Ação</h3>
+
+                            <div class="space-y-4">
+                                <div class="p-3 bg-zinc-900/80 rounded-xl border border-zinc-800 flex justify-between items-center">
+                                    <span class="text-xs text-zinc-400">Valor Original Cobrado:</span>
+                                    <span id="resOriginal" class="font-bold text-zinc-200">R$ 350,00</span>
+                                </div>
+
+                                <div class="p-3 bg-zinc-900/80 rounded-xl border border-zinc-800 flex justify-between items-center">
+                                    <span class="text-xs text-amber-400 font-semibold">Devolução em Dobro (CDC 42):</span>
+                                    <span id="resDouble" class="font-bold text-amber-400">R$ 700,00</span>
+                                </div>
+
+                                <div class="p-3 bg-zinc-900/80 rounded-xl border border-zinc-800 flex justify-between items-center">
+                                    <span class="text-xs text-zinc-400">Juros de Mora Calculados:</span>
+                                    <span id="resInterest" class="font-bold text-emerald-400">+ R$ 42,00</span>
+                                </div>
+
+                                <div class="p-4 bg-emerald-500/10 rounded-2xl border border-emerald-500/30 flex justify-between items-center">
+                                    <div>
+                                        <p class="text-xs text-emerald-400 font-semibold">TOTAL A RECEBER</p>
+                                        <p class="text-2xl font-black text-white" id="resTotal">R$ 742,00</p>
+                                    </div>
+                                    <span class="bg-emerald-500 text-zinc-950 font-extrabold text-[10px] px-2.5 py-1 rounded-md uppercase">Garantido</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 space-y-2">
+                            <button onclick="populateNotificationFromCalc()" class="w-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                Gerar Notificação com este Valor
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Extrajudicial Notification Generator Section -->
+    <section id="notificacao" class="py-16 bg-white border-t border-zinc-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <span class="text-xs font-bold text-amber-600 tracking-wider uppercase">Fundamentação Jurídica Pronta</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-900">Gerador de Notificação Extrajudicial</h2>
+                <p class="text-sm text-zinc-600 mt-1">Gere um documento formal fundamentado no Art. 42 do CDC e Súmula 479 do STJ para enviar ao banco.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <!-- Form Container - Black Box -->
+                <div class="lg:col-span-5 bg-zinc-900 border border-zinc-800 p-6 rounded-3xl text-white space-y-4">
+                    <h3 class="font-bold text-sm text-zinc-200 border-b border-zinc-800 pb-3">Preencha os dados do Reclamante</h3>
+
+                    <div>
+                        <label class="block text-xs text-zinc-300 font-medium mb-1">Nome Completo do Cliente</label>
+                        <input type="text" id="notifName" value="Carlos Eduardo da Silva" oninput="updateNotificationPreview()" class="w-full bg-zinc-950 border border-zinc-800 text-white rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-zinc-300 font-medium mb-1">CPF</label>
+                            <input type="text" id="notifCpf" value="123.456.789-00" oninput="updateNotificationPreview()" class="w-full bg-zinc-950 border border-zinc-800 text-white rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-zinc-300 font-medium mb-1">Banco Notificado</label>
+                            <select id="notifBank" onchange="updateNotificationPreview()" class="w-full bg-zinc-950 border border-zinc-800 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
+                                <option value="Nu Pagamentos S.A. (Nubank)">Nubank</option>
+                                <option value="Itaú Unibanco S.A.">Itaú Unibanco</option>
+                                <option value="Banco Bradesco S.A.">Bradesco</option>
+                                <option value="Banco Santander Brasil S.A.">Santander</option>
+                                <option value="Banco do Brasil S.A.">Banco do Brasil</option>
+                                <option value="Caixa Econômica Federal">Caixa Econômica</option>
+                                <option value="Banco Inter S.A.">Banco Inter</option>
+                                <option value="C6 Bank S.A.">C6 Bank</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-zinc-300 font-medium mb-1">Valor Cobrado (R$)</label>
+                            <input type="text" id="notifValue" value="742,00" oninput="updateNotificationPreview()" class="w-full bg-zinc-950 border border-zinc-800 text-white rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-zinc-300 font-medium mb-1">Nº Protocolo Anterior (opcional)</label>
+                            <input type="text" id="notifProtocol" value="20268894125" oninput="updateNotificationPreview()" class="w-full bg-zinc-950 border border-zinc-800 text-white rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-zinc-300 font-medium mb-1">Descrição Sumária do Ocorrido</label>
+                        <textarea id="notifDetails" rows="3" oninput="updateNotificationPreview()" class="w-full bg-zinc-950 border border-zinc-800 text-white rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-emerald-500">Cobrança de tarifa não autorizada e lançamentos no PIX sem validação de segurança adequada em dispositivo móvel.</textarea>
+                    </div>
+
+                    <div class="flex gap-2 pt-2">
+                        <button onclick="copyNotificationText()" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white font-semibold py-2.5 rounded-xl border border-zinc-700 transition text-xs flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                            </svg>
+                            Copiar Texto
+                        </button>
+                        <button onclick="printNotificationDoc()" class="flex-1 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-2.5 rounded-xl transition text-xs flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                            </svg>
+                            Imprimir PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Document Preview - Black Card with Clean White Paper Look inside -->
+                <div class="lg:col-span-7 bg-zinc-900 border border-zinc-800 p-6 rounded-3xl text-white">
+                    <div class="flex items-center justify-between border-b border-zinc-800 pb-3 mb-4">
+                        <span class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Pré-visualização do Documento Legal</span>
+                        <span class="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded font-mono">Modelo Validado Procon/BACEN</span>
+                    </div>
+
+                    <div id="printArea" class="bg-zinc-950 border border-zinc-800 rounded-2xl p-6 md:p-8 font-serif text-xs leading-relaxed text-zinc-200 select-all max-h-[480px] overflow-y-auto">
+                        <p class="text-center font-bold text-sm tracking-widest uppercase mb-6 text-white border-b border-zinc-800 pb-3">NOTIFICAÇÃO EXTRAJUDICIAL DE REEMBOLSO E CONTESTAÇÃO</p>
+
+                        <p class="mb-4"><strong>À DIREÇÃO DE ATENDIMENTO E OUVIDORIA DO:</strong> <span id="prevBank" class="text-amber-400 font-sans font-bold">Nu Pagamentos S.A. (Nubank)</span></p>
+
+                        <p class="mb-4">
+                            <strong>NOTIFICANTE:</strong> <span id="prevName" class="font-sans font-semibold text-white">Carlos Eduardo da Silva</span>, inscrito sob o CPF nº <span id="prevCpf" class="font-sans text-white">123.456.789-00</span>, titular da conta corrente junto a esta instituição.
+                        </p>
+
+                        <p class="mb-4 leading-relaxed">
+                            Vem por meio deste instrumento requerer formalmente a <strong>RESTITUIÇÃO IMEDIATA</strong> da quantia de <strong>R$ <span id="prevValue" class="font-sans text-emerald-400 font-bold">742,00</span></strong>, referente a transações/tarifas não autorizadas, conforme histórico registrado sob o protocolo prévio nº <span id="prevProtocol" class="font-sans text-zinc-300">20268894125</span>.
+                        </p>
+
+                        <p class="mb-4 font-sans bg-zinc-900 p-3 rounded-lg border border-zinc-800 italic">
+                            "<strong>Fatos:</strong> <span id="prevDetails">Cobrança de tarifa não autorizada e lançamentos no PIX sem validação de segurança adequada em dispositivo móvel.</span>"
+                        </p>
+
+                        <p class="mb-4"><strong>FUNDAMENTAÇÃO JURÍDICA:</strong></p>
+                        <ul class="list-disc pl-5 mb-4 space-y-1 text-zinc-300">
+                            <li><strong>Art. 42, Parágrafo Único do CDC (Lei nº 8.078/90):</strong> O consumidor cobrado em quantia indevida tem direito à repetição do indébito, por valor igual ao dobro do que pagou em excesso, acrescido de correção monetária.</li>
+                            <li><strong>Súmula 479 do Superior Tribunal de Justiça (STJ):</strong> "As instituições financeiras respondem objetivamente pelos danos gerados por fortuito interno relativo a fraudes e delitos praticados por terceiros no âmbito de operações bancárias."</li>
+                            <li><strong>Resolução BCB nº 103/2021:</strong> Regula o Mecanismo Especial de Devolução (MED) e prazo legal de resposta.</li>
+                        </ul>
+
+                        <p class="mb-6">
+                            Fica estipulado o prazo de <strong>05 (cinco) dias úteis</strong> para a efetivação do estorno do valor em conta corrente, sob pena de ajuizamento de Ação Declaratória de Inexistência de Débito c/c Repetição do Indébito e Danos Morais no Juizado Especial Cível competente.
+                        </p>
+
+                        <div class="mt-8 pt-4 border-t border-zinc-800 flex justify-between items-end font-sans">
+                            <div>
+                                <p class="text-[10px] text-zinc-400">Data da Notificação:</p>
+                                <p id="prevDate" class="text-xs font-medium text-white">29 de Setembro de 2026</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="border-b border-zinc-700 pb-1 mb-1 font-semibold text-white" id="prevSign">Carlos Eduardo da Silva</p>
+                                <p class="text-[10px] text-zinc-400">Assinatura Eletrônica do Consumidor</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Meus Chamados Tracker Section -->
+    <section id="meus-protocolos" class="py-16 bg-white border-t border-zinc-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 md:p-8 text-white shadow-2xl">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-6">
+                    <div>
+                        <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Histórico Pessoal Salvo</span>
+                        <h2 class="text-2xl font-extrabold text-white">Meus Chamados & Protocolos</h2>
+                        <p class="text-xs text-zinc-400 mt-0.5">Acompanhe suas solicitações salvas localmente neste dispositivo.</p>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <button onclick="openWizardModal()" class="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Novo Protocolo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Tabs -->
+                <div class="flex items-center gap-2 mt-6 overflow-x-auto pb-2 text-xs">
+                    <button onclick="renderProtocolList('all')" class="proto-filter active bg-zinc-800 text-white px-3.5 py-1.5 rounded-lg border border-zinc-700">Todos</button>
+                    <button onclick="renderProtocolList('Em Análise')" class="proto-filter bg-zinc-950 text-zinc-400 px-3.5 py-1.5 rounded-lg border border-zinc-800 hover:text-white">Em Análise (MED)</button>
+                    <button onclick="renderProtocolList('Aprovado')" class="proto-filter bg-zinc-950 text-zinc-400 px-3.5 py-1.5 rounded-lg border border-zinc-800 hover:text-white">Aprovados</button>
+                    <button onclick="renderProtocolList('Reembolsado')" class="proto-filter bg-zinc-950 text-zinc-400 px-3.5 py-1.5 rounded-lg border border-zinc-800 hover:text-white">Reembolsados</button>
+                </div>
+
+                <!-- Protocol Table / Cards -->
+                <div id="protocolListContainer" class="mt-6 space-y-3">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust & Real Support Photos -->
+    <section class="py-16 bg-white border-t border-zinc-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Atendimento Humanizado</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-zinc-900">Especialistas em Defesa do Consumidor Bancário</h2>
+                <p class="text-sm text-zinc-600 mt-1">Conheça nossa equipe técnica focada na facilitação de contestações e ressarcimentos.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Team Card 1 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 text-white flex flex-col items-center text-center shadow-xl">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Dra. Juliana Mendes" class="w-20 h-20 rounded-full object-cover border-2 border-emerald-500 mb-3 shadow-lg">
+                    <h3 class="font-bold text-sm text-white">Dra. Juliana Mendes</h3>
+                    <p class="text-[11px] text-emerald-400 font-medium">Especialista MED PIX & CDC</p>
+                    <p class="text-xs text-zinc-400 mt-2">Atuação focada no acionamento do bloqueio cautelar em contestações PIX.</p>
+                </div>
+
+                <!-- Team Card 2 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 text-white flex flex-col items-center text-center shadow-xl">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80" alt="Dr. Marcos Vinicius" class="w-20 h-20 rounded-full object-cover border-2 border-amber-500 mb-3 shadow-lg">
+                    <h3 class="font-bold text-sm text-white">Dr. Marcos Vinicius</h3>
+                    <p class="text-[11px] text-amber-400 font-medium">Consultor de Tarifas Bancárias</p>
+                    <p class="text-xs text-zinc-400 mt-2">Recuperação em dobro de tarifas de manutenção e juros de cheque especial.</p>
+                </div>
+
+                <!-- Team Card 3 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 text-white flex flex-col items-center text-center shadow-xl">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=300&q=80" alt="Camila Albuquerque" class="w-20 h-20 rounded-full object-cover border-2 border-blue-500 mb-3 shadow-lg">
+                    <h3 class="font-bold text-sm text-white">Camila Albuquerque</h3>
+                    <p class="text-[11px] text-blue-400 font-medium">Análise de Compras Cartão</p>
+                    <p class="text-xs text-zinc-400 mt-2">Chargeback express e suporte em transações não reconhecidas em cartão.</p>
+                </div>
+
+                <!-- Team Card 4 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 text-white flex flex-col items-center text-center shadow-xl">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80" alt="Roberto Fonseca" class="w-20 h-20 rounded-full object-cover border-2 border-purple-500 mb-3 shadow-lg">
+                    <h3 class="font-bold text-sm text-white">Roberto Fonseca</h3>
+                    <p class="text-[11px] text-purple-400 font-medium">Segurança da Informação</p>
+                    <p class="text-xs text-zinc-400 mt-2">Suporte contra golpes de coação, clonagem de WhatsApp e invasão bancária.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4-Step Wizard Modal -->
+    <div id="wizardModal" class="fixed inset-0 z-50 hidden bg-zinc-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-3xl w-full max-w-2xl text-white shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-zinc-800 flex items-center justify-between bg-zinc-950">
+                <div>
+                    <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Procedimento Oficial de Contestação</span>
+                    <h3 class="text-xl font-extrabold text-white">Solicitação de Reembolso Bancário</h3>
+                </div>
+                <button onclick="closeWizardModal()" class="text-zinc-400 hover:text-white p-2 rounded-xl bg-zinc-900 border border-zinc-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="bg-zinc-950 px-6 py-2 border-b border-zinc-800/60">
+                <div class="flex justify-between text-[11px] font-semibold text-zinc-400 mb-1">
+                    <span id="stepIndicator">Passo 1 de 4: Escolha do Banco</span>
+                    <span id="stepPercent">25%</span>
+                </div>
+                <div class="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+                    <div id="progressBar" class="bg-emerald-500 h-full w-1/4 transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <!-- Modal Body (Scrollable) -->
+            <div class="p-6 overflow-y-auto space-y-6 flex-1">
+                
+                <!-- STEP 1: Select Bank & Channel -->
+                <div id="wizardStep1" class="space-y-4">
+                    <h4 class="font-bold text-sm text-zinc-200">Selecione o Banco Institucional e o Canal</h4>
+                    
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1.5 font-medium">Banco Onde Ocorreu a Perda ou Cobrança</label>
+                        <select id="stepBank" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                            <option value="Nubank (Compe 260)">Nubank</option>
+                            <option value="Itaú Unibanco (Compe 341)">Itaú Unibanco</option>
+                            <option value="Bradesco (Compe 237)">Bradesco</option>
+                            <option value="Santander (Compe 033)">Banco Santander</option>
+                            <option value="Banco do Brasil (Compe 001)">Banco do Brasil</option>
+                            <option value="Caixa Econômica Federal (Compe 104)">Caixa Econômica Federal</option>
+                            <option value="Banco Inter (Compe 077)">Banco Inter</option>
+                            <option value="C6 Bank (Compe 336)">C6 Bank</option>
+                            <option value="BTG Pactual (Compe 208)">BTG Pactual</option>
+                            <option value="PicPay (Compe 380)">PicPay</option>
+                            <option value="Mercado Pago (Compe 323)">Mercado Pago</option>
+                            <option value="PagBank (Compe 290)">PagBank</option>
+                            <option value="Neon (Compe 536)">Neon</option>
+                            <option value="Sicoob (Compe 756)">Sicoob</option>
+                            <option value="Sicredi (Compe 748)">Sicredi</option>
+                            <option value="Banco Safra (Compe 422)">Banco Safra</option>
+                            <option value="Banrisul (Compe 041)">Banrisul</option>
+                            <option value="XP Investimentos (Compe 102)">XP Investimentos</option>
+                            <option value="Banco Original (Compe 212)">Banco Original</option>
+                            <option value="RecargaPay (Compe 301)">RecargaPay</option>
+                            <option value="Banco BMG (Compe 318)">Banco BMG</option>
+                            <option value="Banco Pan (Compe 623)">Banco Pan</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1.5 font-medium">Canal de Origem da Transação</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 hover:border-emerald-500 cursor-pointer flex items-center gap-2 text-xs">
+                                <input type="radio" name="channel" value="PIX / Transferência" checked class="text-emerald-500">
+                                <span>PIX / Transferência</span>
+                            </label>
+                            <label class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 hover:border-emerald-500 cursor-pointer flex items-center gap-2 text-xs">
+                                <input type="radio" name="channel" value="Cartão de Crédito/Débito" class="text-emerald-500">
+                                <span>Cartão Crédito/Débito</span>
+                            </label>
+                            <label class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 hover:border-emerald-500 cursor-pointer flex items-center gap-2 text-xs">
+                                <input type="radio" name="channel" value="Tarifa / Debito Automático" class="text-emerald-500">
+                                <span>Tarifa em Conta</span>
+                            </label>
+                            <label class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 hover:border-emerald-500 cursor-pointer flex items-center gap-2 text-xs">
+                                <input type="radio" name="channel" value="Empréstimo Não Reconhecido" class="text-emerald-500">
+                                <span>Empréstimo / Consignado</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Category of Problem -->
+                <div id="wizardStep2" class="space-y-4 hidden">
+                    <h4 class="font-bold text-sm text-zinc-200">Escolha a Categoria e Enquadramento Legal</h4>
+
+                    <div class="space-y-2.5">
+                        <label class="p-3.5 bg-zinc-950 rounded-xl border border-zinc-800 hover:border-emerald-500 cursor-pointer flex items-start gap-3">
+                            <input type="radio" name="category" value="MED PIX Golpe/Fraude (Até 80 dias)" checked class="mt-1 text-emerald-500">
+                            <div>
+                                <p class="text-xs font-bold text-white">MED PIX - Golpe ou Fraude (Até 80 dias)</p>
+                                <p class="text-[11px] text-zinc-400">Falso parente, compra no e-commerce falso, QR Code adulterado. Resolução BCB nº 103.</p>
+                            </div>
+                        </label>
+
+                        <label class="p-3.5 bg-zinc-950 rounded-xl border border-zinc-800 hover:border-emerald-500 cursor-pointer flex items-start gap-3">
+                            <input type="radio" name="category" value="Compra Cartão Não Reconhecida / Clonagem" class="mt-1 text-emerald-500">
+                            <div>
+                                <p class="text-xs font-bold text-white">Compra em Cartão Não Reconhecida / Cartão Clonado</p>
+                                <p class="text-[11px] text-zinc-400">Lançamentos suspeitos na fatura, máquina adulterada ou uso sem senha.</p>
+                            </div>
+                        </label>
+
+                        <label class="p-3.5 bg-zinc-950 rounded-xl border border-zinc-800 hover:border-emerald-500 cursor-pointer flex items-start gap-3">
+                            <input type="radio" name="category" value="Tarifa Indevida CDC Art. 42 (Restituição em Dobro)" class="mt-1 text-emerald-500">
+                            <div>
+                                <p class="text-xs font-bold text-white">Tarifa Bancária Indevida (CDC Artigo 42)</p>
+                                <p class="text-[11px] text-zinc-400">Pacotes de serviços cobrados sem autorização expressa em conta corrente.</p>
+                            </div>
+                        </label>
+
+                        <label class="p-3.5 bg-zinc-950 rounded-xl border border-zinc-800 hover:border-emerald-500 cursor-pointer flex items-start gap-3">
+                            <input type="radio" name="category" value="Celular Roubado / Coação Física" class="mt-1 text-emerald-500">
+                            <div>
+                                <p class="text-xs font-bold text-white">Roubo de Celular / Coação Físico-Financeira</p>
+                                <p class="text-[11px] text-zinc-400">Transferências efetuadas durante sequestro relâmpago ou roubo do aparelho.</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Transaction Details -->
+                <div id="wizardStep3" class="space-y-4 hidden">
+                    <h4 class="font-bold text-sm text-zinc-200">Dados da Transação e Comprovante</h4>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-zinc-400 mb-1">Valor Total (R$)</label>
+                            <input type="number" id="stepAmount" value="1250.00" step="0.01" class="w-full bg-zinc-950 border border-zinc-700 text-white rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-emerald-500 font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-zinc-400 mb-1">Data da Ocorrência</label>
+                            <input type="date" id="stepDate" value="2026-09-28" class="w-full bg-zinc-950 border border-zinc-700 text-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">ID End-to-End E2E do PIX ou Código do Comprovante (opcional)</label>
+                        <input type="text" id="stepE2E" placeholder="Ex: E00038166202609281200E..." class="w-full bg-zinc-950 border border-zinc-700 text-white rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-emerald-500 font-mono text-xs">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Nome do Favorecido / Chave PIX Destino</label>
+                        <input type="text" id="stepFavored" placeholder="Ex: Nome da pessoa ou empresa recebedora" class="w-full bg-zinc-950 border border-zinc-700 text-white rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+
+                    <!-- File Upload Mock -->
+                    <div class="border-2 border-dashed border-zinc-800 rounded-2xl p-4 text-center bg-zinc-950 hover:border-zinc-700 transition cursor-pointer" onclick="document.getElementById('mockFileInput').click()">
+                        <svg class="w-8 h-8 text-zinc-500 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                        </svg>
+                        <p class="text-xs font-medium text-zinc-300">Anexar Comprovante ou Boletim de Ocorrência (Simulado)</p>
+                        <p id="fileNameDisplay" class="text-[10px] text-emerald-400 mt-1">Nenhum arquivo selecionado</p>
+                        <input type="file" id="mockFileInput" class="hidden" onchange="handleFileSelect(this)">
+                    </div>
+                </div>
+
+                <!-- STEP 4: Confirmation & Unique Protocol -->
+                <div id="wizardStep4" class="space-y-4 hidden">
+                    <div class="text-center py-4">
+                        <div class="w-14 h-14 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-3 border border-emerald-500/30">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-xl font-bold text-white">Protocolo Registrado com Sucesso!</h4>
+                        <p class="text-xs text-zinc-400 mt-1">Seu chamado foi enquadrado na norma regulatória do Banco Central.</p>
+                    </div>
+
+                    <div class="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 space-y-2 text-xs">
+                        <div class="flex justify-between items-center border-b border-zinc-800 pb-2">
+                            <span class="text-zinc-400">Número do Protocolo Único:</span>
+                            <span id="resProtocolNum" class="font-mono font-bold text-emerald-400 text-sm">PROTO-2026-9812</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-zinc-800 pb-2">
+                            <span class="text-zinc-400">Banco Responsável:</span>
+                            <span id="resBankName" class="font-semibold text-white">Nubank</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-zinc-800 pb-2">
+                            <span class="text-zinc-400">Valor Solicitado:</span>
+                            <span id="resValueDisplay" class="font-bold text-white">R$ 1.250,00</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-zinc-800 pb-2">
+                            <span class="text-zinc-400">Data Limite de Resposta BACEN:</span>
+                            <span id="resDeadline" class="font-bold text-amber-400">09 de Outubro de 2026 (10 dias úteis)</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-zinc-400">Status Inicial:</span>
+                            <span class="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded text-[10px] font-bold">Em Análise Técnica MED</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer Buttons -->
+            <div class="p-4 border-t border-zinc-800 bg-zinc-950 flex justify-between items-center">
+                <button id="btnPrev" onclick="navigateWizard(-1)" class="bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-semibold px-4 py-2 rounded-xl text-xs border border-zinc-800 hidden">
+                    Voltar
+                </button>
+                <div class="ml-auto flex gap-2">
+                    <button id="btnNext" onclick="navigateWizard(1)" class="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold px-5 py-2.5 rounded-xl text-xs transition">
+                        Avançar Passo
+                    </button>
+                    <button id="btnFinish" onclick="finishWizard()" class="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold px-5 py-2.5 rounded-xl text-xs transition hidden">
+                        Salvar e Concluir
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Floating Chat Widget -->
+    <div id="chatWidgetContainer" class="fixed bottom-5 right-5 z-50">
+        <!-- Chat Toggle Button -->
+        <button id="chatToggleBtn" onclick="toggleChatBox()" class="bg-zinc-900 hover:bg-zinc-800 text-white rounded-full p-3.5 shadow-2xl border border-zinc-700 flex items-center gap-3 hover:scale-105 transition active:scale-95 group">
+            <div class="relative">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&q=80" alt="Suporte" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-400">
+                <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-zinc-900 rounded-full"></span>
+            </div>
+            <div class="text-left hidden sm:block pr-2">
+                <p class="text-xs font-bold text-white group-hover:text-emerald-400 transition">Atendimento Online</p>
+                <p class="text-[10px] text-zinc-400">Suporte a Reembolsos</p>
+            </div>
+        </button>
+
+        <!-- Chat Box Overlay - High Contrast Black Card -->
+        <div id="chatBox" class="hidden absolute bottom-16 right-0 w-[340px] sm:w-[380px] bg-zinc-900 border border-zinc-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[500px]">
+            <!-- Chat Header -->
+            <div class="p-4 bg-zinc-950 border-b border-zinc-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&q=80" alt="Assistente Virtual" class="w-9 h-9 rounded-full object-cover border border-emerald-400">
+                    <div>
+                        <h4 class="font-bold text-xs text-white">Fernanda - Suporte Bancário</h4>
+                        <p class="text-[10px] text-emerald-400 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Responde em menos de 1 min
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1">
+                    <button onclick="toggleAudioSound()" id="soundBtn" title="Som de notificação" class="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+                        </svg>
+                    </button>
+                    <button onclick="toggleChatBox()" class="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Messages Log -->
+            <div id="chatLog" class="p-4 flex-1 overflow-y-auto space-y-3 text-xs">
+                <!-- Message 1 (Assistant) -->
+                <div class="flex gap-2.5">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&q=80" class="w-7 h-7 rounded-full object-cover">
+                    <div class="bg-zinc-950 border border-zinc-800 p-3 rounded-2xl rounded-tl-none max-w-[80%] text-zinc-200">
+                        Olá! Sou a Fernanda da Central de Reembolsos Bancários. Como posso te ajudar hoje?
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Action Options -->
+            <div class="px-3 py-2 bg-zinc-950 border-t border-zinc-800 flex gap-1.5 overflow-x-auto text-[11px] no-scrollbar">
+                <button onclick="sendQuickOption('Como funciona o MED no PIX?')" class="bg-zinc-900 border border-zinc-700 text-zinc-300 hover:text-white px-2.5 py-1 rounded-lg whitespace-nowrap">
+                    Como funciona o MED?
+                </button>
+                <button onclick="sendQuickOption('Quero calcular valor em dobro')" class="bg-zinc-900 border border-zinc-700 text-zinc-300 hover:text-white px-2.5 py-1 rounded-lg whitespace-nowrap">
+                    Cobrança Indevida 2x
+                </button>
+                <button onclick="sendQuickOption('Falar com Atendente Humano')" class="bg-zinc-900 border border-zinc-700 text-zinc-300 hover:text-white px-2.5 py-1 rounded-lg whitespace-nowrap">
+                    Atendente Humano
+                </button>
+            </div>
+
+            <!-- Chat Input Bar -->
+            <div class="p-3 bg-zinc-950 border-t border-zinc-800 flex gap-2">
+                <input type="text" id="chatInput" onkeydown="if(event.key==='Enter') sendChatMessage()" placeholder="Digite sua mensagem..." class="flex-1 bg-zinc-900 border border-zinc-700 text-white rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-emerald-500">
+                <button onclick="sendChatMessage()" class="bg-emerald-500 hover:bg-emerald-400 text-zinc-950 p-2 rounded-xl transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9-7-9-7-9 7 9 7zm0 0v-8"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="bg-zinc-950 border-t border-zinc-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div class="space-y-3 md:col-span-1">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-zinc-900 rounded-lg flex items-center justify-center font-bold text-emerald-400 border border-zinc-800">
+                            F
+                        </div>
+                        <span class="font-extrabold text-base tracking-tight">FinSuporte Brasil</span>
+                    </div>
+                    <p class="text-xs text-zinc-400 leading-relaxed">
+                        Plataforma unificada de facilitação e acolhimento para contestações bancárias, regida pela transparência e pelo Código de Defesa do Consumidor.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-xs uppercase tracking-wider text-zinc-300 mb-3">Links Regulatórios</h4>
+                    <ul class="space-y-2 text-xs text-zinc-400">
+                        <li><a href="https://www.bcb.gov.br" target="_blank" class="hover:text-emerald-400">Banco Central do Brasil (BACEN)</a></li>
+                        <li><a href="https://www.consumidor.gov.br" target="_blank" class="hover:text-emerald-400">Consumidor.gov.br</a></li>
+                        <li><a href="https://procon.sp.gov.br" target="_blank" class="hover:text-emerald-400">Portal do PROCON</a></li>
+                        <li><a href="https://www.febraban.org.br" target="_blank" class="hover:text-emerald-400">FEBRABAN</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-xs uppercase tracking-wider text-zinc-300 mb-3">Principais Direitos</h4>
+                    <ul class="space-y-2 text-xs text-zinc-400">
+                        <li><span>MED PIX - Resolução BCB nº 103</span></li>
+                        <li><span>Repetição do Indébito - CDC Art. 42</span></li>
+                        <li><span>Responsabilidade Bancária - Súmula 479 STJ</span></li>
+                        <li><span>Portabilidade e Transparência de Tarifas</span></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-xs uppercase tracking-wider text-zinc-300 mb-3">Segurança e Suporte</h4>
+                    <p class="text-xs text-zinc-400 mb-2">Central unificada para os 22 maiores bancos brasileiros.</p>
+                    <span class="inline-block bg-zinc-900 border border-zinc-800 px-3 py-1 rounded text-[11px] text-emerald-400 font-mono">
+                        Criptografia SSL 256-Bit
+                    </span>
+                </div>
+            </div>
+
+            <div class="border-t border-zinc-800/80 pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-zinc-500 gap-2">
+                <p>© 2026 FinSuporte Brasil - Todos os direitos reservados. Projeto educativo e informativo de apoio ao consumidor.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:underline">Termos de Uso</a>
+                    <a href="#" class="hover:underline">Privacidade LGPD</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const BANK_DATABASE = [
+            {
+                id: 'nubank',
+                name: 'Nubank',
+                compe: '260',
+                type: 'digital',
+                categoryLabel: 'Digital',
+                sac: '0800 608 6236',
+                ouvidoria: '0800 887 0463',
+                whatsapp: '+55 11 4020-0185',
+                color: 'from-purple-900/40 to-zinc-900',
+                badge: 'Nu Pagamentos'
+            },
+            {
+                id: 'itau',
+                name: 'Itaú Unibanco',
+                compe: '341',
+                type: 'tradicional',
+                categoryLabel: 'Tradicional',
+                sac: '0800 728 0728',
+                ouvidoria: '0800 570 0011',
+                whatsapp: '+55 11 4004-4828',
+                color: 'from-orange-900/40 to-zinc-900',
+                badge: 'Itaú S.A.'
+            },
+            {
+                id: 'bradesco',
+                name: 'Banco Bradesco',
+                compe: '237',
+                type: 'tradicional',
+                categoryLabel: 'Tradicional',
+                sac: '0800 704 8383',
+                ouvidoria: '0800 727 9933',
+                whatsapp: '+55 11 3335-0237',
+                color: 'from-red-900/40 to-zinc-900',
+                badge: 'Bradesco'
+            },
+            {
+                id: 'santander',
+                name: 'Banco Santander',
+                compe: '033',
+                type: 'tradicional',
+                categoryLabel: 'Tradicional',
+                sac: '0800 762 7777',
+                ouvidoria: '0800 726 0322',
+                whatsapp: '+55 11 4004-3535',
+                color: 'from-red-950/50 to-zinc-900',
+                badge: 'Santander'
+            },
+            {
+                id: 'bb',
+                name: 'Banco do Brasil',
+                compe: '001',
+                type: 'tradicional',
+                categoryLabel: 'Tradicional',
+                sac: '0800 729 0722',
+                ouvidoria: '0800 729 5678',
+                whatsapp: '+55 61 4004-0001',
+                color: 'from-yellow-900/40 to-zinc-900',
+                badge: 'BB S.A.'
+            },
+            {
+                id: 'caixa',
+                name: 'Caixa Econômica Federal',
+                compe: '104',
+                type: 'tradicional',
+                categoryLabel: 'Tradicional',
+                sac: '0800 726 0101',
+                ouvidoria: '0800 725 7474',
+                whatsapp: '+55 0800 104 0104',
+                color: 'from-blue-900/40 to-zinc-900',
+                badge: 'Caixa Federal'
+            },
+            {
+                id: 'inter',
+                name: 'Banco Inter',
+                compe: '077',
+                type: 'digital',
+                categoryLabel: 'Digital',
+                sac: '0800 940 9999',
+                ouvidoria: '0800 940 7772',
+                whatsapp: '+55 31 3003-4070',
+                color: 'from-orange-950/50 to-zinc-900',
+                badge: 'Inter S.A.'
+            },
+            {
+                id: 'c6',
+                name: 'C6 Bank',
+                compe: '336',
+                type: 'digital',
+                categoryLabel: 'Digital',
+                sac: '0800 660 0060',
+                ouvidoria: '0800 660 6060',
+                whatsapp: '+55 11 3003-6116',
+                color: 'from-zinc-800 to-zinc-900',
+                badge: 'C6 Bank'
+            },
+            {
+                id: 'btg',
+                name: 'BTG Pactual',
+                compe: '208',
+                type: 'investimento',
+                categoryLabel: 'Investimentos',
+                sac: '0800 772 2827',
+                ouvidoria: '0800 722 0048',
+                whatsapp: '+55 11 3003-4828',
+                color: 'from-slate-800 to-zinc-900',
+                badge: 'BTG Pactual'
+            },
+            {
+                id: 'picpay',
+                name: 'PicPay',
+                compe: '380',
+                type: 'digital',
+                categoryLabel: 'Digital',
+                sac: '0800 025 8000',
+                ouvidoria: '0800 025 2000',
+                whatsapp: '+55 27 3003-4070',
+                color: 'from-emerald-950/60 to-zinc-900',
+                badge: 'PicPay'
+            },
+            {
+                id: 'mercadopago',
+                name: 'Mercado Pago',
+                compe: '323',
+                type: 'digital',
+                categoryLabel: 'Digital',
+                sac: '0800 637 7246',
+                ouvidoria: '0800 637 7246',
+                whatsapp: '+55 11 2050-3887',
+                color: 'from-sky-950/60 to-zinc-900',
+                badge: 'Mercado Pago'
+            },
+            {
+                id: 'pagbank',
+                name: 'PagBank / PagSeguro',
+                compe: '290',
+                type: 'digital',
+                categoryLabel: 'Digital',
+                sac: '0800 728 2170',
+                ouvidoria: '0800 728 2167',
+                whatsapp: '+55 11 4003-1775',
+                color: 'from-yellow-950/40 to-zinc-900',
+                badge: 'PagBank'
+            },
+            {
+                id: 'neon',
+                name: 'Banco Neon',
+                compe: '536',
+                type: 'digital',
+                categoryLabel: 'Digital',
+                sac: '0800 326 0844',
+                ouvidoria: '0800 941 2112',
+                whatsapp: '+55 11 4003-1610',
+                color: 'from-cyan-950/50 to-zinc-900',
+                badge: 'Neon Pagamentos'
+            },
+            {
+                id: 'sicoob',
+                name: 'Sicoob',
+                compe: '756',
+                type: 'cooperativa',
+                categoryLabel: 'Cooperativa',
+                sac: '0800 724 4420',
+                ouvidoria: '0800 725 0996',
+                whatsapp: '+55 61 4007-1555',
+                color: 'from-teal-950/50 to-zinc-900',
+                badge: 'Sistema Sicoob'
+            },
+            {
+                id: 'sicredi',
+                name: 'Sicredi',
+                compe: '748',
+                type: 'cooperativa',
+                categoryLabel: 'Cooperativa',
+                sac: '0800 724 7220',
+                ouvidoria: '0800 646 2500',
+                whatsapp: '+55 51 3358-4770',
+                color: 'from-green-950/50 to-zinc-900',
+                badge: 'Sicredi Coop'
+            },
+            {
+                id: 'safra',
+                name: 'Banco Safra',
+                compe: '422',
+                type: 'tradicional',
+                categoryLabel: 'Tradicional',
+                sac: '0800 772 5755',
+                ouvidoria: '0800 770 1236',
+                whatsapp: '+55 11 3253-4455',
+                color: 'from-amber-950/50 to-zinc-900',
+                badge: 'Safra S.A.'
+            },
+            {
+                id: 'banrisul',
+                name: 'Banrisul',
+                compe: '041',
+                type: 'tradicional',
+                categoryLabel: 'Tradicional',
+                sac: '0800 646 1515',
+                ouvidoria: '0800 644 2200',
+                whatsapp: '+55 51 3215-1800',
+                color: 'from-blue-950/50 to-zinc-900',
+                badge: 'Banrisul'
+            },
+            {
+                id: 'xp',
+                name: 'XP Investimentos',
+                compe: '102',
+                type: 'investimento',
+                categoryLabel: 'Investimentos',
+                sac: '0800 772 0230',
+                ouvidoria: '0800 722 3730',
+                whatsapp: '+55 11 4935-2720',
+                color: 'from-zinc-800 to-zinc-900',
+                badge: 'XP Inc.'
+            },
+            {
+                id: 'original',
+                name: 'Banco Original',
+                compe: '212',
+                type: 'digital',
+                categoryLabel: 'Digital',
+                sac: '0800 744 0744',
+                ouvidoria: '0800 755 0755',
+                whatsapp: '+55 11 4004-0800',
+                color: 'from-emerald-950/40 to-zinc-900',
+                badge: 'Original'
+            },
+            {
+                id: 'recargapay',
+                name: 'RecargaPay',
+                compe: '301',
+                type: 'digital',
+                categoryLabel: 'Digital',
+                sac: '0800 880 1001',
+                ouvidoria: '0800 880 2002',
+                whatsapp: '+55 11 3003-9520',
+                color: 'from-indigo-950/50 to-zinc-900',
+                badge: 'RecargaPay'
+            },
+            {
+                id: 'bmg',
+                name: 'Banco BMG',
+                compe: '318',
+                type: 'tradicional',
+                categoryLabel: 'Tradicional',
+                sac: '0800 979 7099',
+                ouvidoria: '0800 723 2044',
+                whatsapp: '+55 11 4002-7007',
+                color: 'from-orange-950/40 to-zinc-900',
+                badge: 'BMG S.A.'
+            },
+            {
+                id: 'pan',
+                name: 'Banco Pan',
+                compe: '623',
+                type: 'digital',
+                categoryLabel: 'Digital',
+                sac: '0800 776 8000',
+                ouvidoria: '0800 776 9000',
+                whatsapp: '+55 11 4003-0101',
+                color: 'from-blue-950/40 to-zinc-900',
+                badge: 'Pan S.A.'
+            }
+        ];
+
+        let currentFilterCategory = 'all';
+        let currentSearchQuery = '';
+        let wizardCurrentStep = 1;
+        let isAudioEnabled = true;
+
+        function renderBankGrid() {
+            const grid = document.getElementById('bankGrid');
+            grid.innerHTML = '';
+
+            const filtered = BANK_DATABASE.filter(bank => {
+                const matchesCat = currentFilterCategory === 'all' || bank.type === currentFilterCategory;
+                const matchesSearch = bank.name.toLowerCase().includes(currentSearchQuery.toLowerCase()) ||
+                                      bank.compe.includes(currentSearchQuery) ||
+                                      bank.badge.toLowerCase().includes(currentSearchQuery.toLowerCase());
+                return matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-zinc-500">
+                        <p class="font-semibold text-sm">Nenhum banco encontrado para a busca "${currentSearchQuery}".</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(bank => {
+                const card = document.createElement('div');
+                card.className = `bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-white shadow-xl hover:border-zinc-700 transition flex flex-col justify-between group relative overflow-hidden bg-gradient-to-b ${bank.color}`;
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-[10px] font-bold bg-zinc-800 text-zinc-300 px-2.5 py-1 rounded border border-zinc-700">
+                                COMPE: ${bank.compe}
+                            </span>
+                            <span class="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
+                                ${bank.categoryLabel}
+                            </span>
+                        </div>
+
+                        <h3 class="font-extrabold text-lg text-white group-hover:text-emerald-400 transition mb-1">
+                            ${bank.name}
+                        </h3>
+                        <p class="text-xs text-zinc-400 mb-4">${bank.badge}</p>
+
+                        <div class="space-y-2 text-xs text-zinc-300 border-t border-zinc-800/80 pt-3 mb-5">
+                            <div class="flex items-center justify-between">
+                                <span class="text-zinc-400">SAC 0800:</span>
+                                <span class="font-mono font-semibold text-white">${bank.sac}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-zinc-400">Ouvidoria:</span>
+                                <span class="font-mono text-zinc-300">${bank.ouvidoria}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-zinc-400">WhatsApp Verificado:</span>
+                                <span class="font-mono text-emerald-400">${bank.whatsapp}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 pt-2 border-t border-zinc-800/80">
+                        <button onclick="openWizardForBank('${bank.name} (Compe ${bank.compe})')" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Pedir Reembolso Neste Banco
+                        </button>
+                        <button onclick="openChatWithBank('${bank.name}')" class="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-medium py-2 rounded-xl text-xs border border-zinc-700 transition">
+                            Falar no Chat Especializado
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterBanks() {
+            currentSearchQuery = document.getElementById('bankSearch').value;
+            renderBankGrid();
+        }
+
+        function filterCategory(cat) {
+            currentFilterCategory = cat;
+            document.querySelectorAll('.bank-cat-btn').forEach(btn => {
+                btn.classList.remove('bg-zinc-900', 'text-white');
+                btn.classList.add('bg-zinc-100', 'text-zinc-700');
+            });
+            event.target.classList.remove('bg-zinc-100', 'text-zinc-700');
+            event.target.classList.add('bg-zinc-900', 'text-white');
+            renderBankGrid();
+        }
+
+        function calculateDoubleRefund() {
+            const amount = parseFloat(document.getElementById('calcAmount').value) || 0;
+            const months = parseInt(document.getElementById('calcMonths').value) || 1;
+            const rate = parseFloat(document.getElementById('calcInterestRate').value) || 0.01;
+
+            const doubleVal = amount * 2;
+            const interestVal = doubleVal * (rate * months);
+            const totalVal = doubleVal + interestVal;
+
+            document.getElementById('resOriginal').innerText = `R$ ${amount.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('resDouble').innerText = `R$ ${doubleVal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('resInterest').innerText = `+ R$ ${interestVal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('resTotal').innerText = `R$ ${totalVal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        }
+
+        function populateNotificationFromCalc() {
+            const total = document.getElementById('resTotal').innerText.replace('R$', '').trim();
+            document.getElementById('notifValue').value = total;
+            const reason = document.getElementById('calcReason').value;
+            document.getElementById('notifDetails').value = `Solicitação de reembolso referente a ${reason}. Cobrança não reconhecida calculada nos termos do Art. 42 do CDC.`;
+            updateNotificationPreview();
+            
+            // Scroll smoothly to notification generator
+            document.getElementById('notificacao').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateNotificationPreview() {
+            document.getElementById('prevName').innerText = document.getElementById('notifName').value || 'Nome do Consumidor';
+            document.getElementById('prevSign').innerText = document.getElementById('notifName').value || 'Nome do Consumidor';
+            document.getElementById('prevCpf').innerText = document.getElementById('notifCpf').value || '000.000.000-00';
+            document.getElementById('prevBank').innerText = document.getElementById('notifBank').value;
+            document.getElementById('prevValue').innerText = document.getElementById('notifValue').value || '0,00';
+            document.getElementById('prevProtocol').innerText = document.getElementById('notifProtocol').value || 'N/A';
+            document.getElementById('prevDetails').innerText = document.getElementById('notifDetails').value || 'Descreva as razões.';
+        }
+
+        function copyNotificationText() {
+            const text = document.getElementById('printArea').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = text;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+            alert('Notificação Extrajudicial copiada para a área de transferência com sucesso!');
+        }
+
+        function printNotificationDoc() {
+            window.print();
+        }
+
+        function openWizardModal() {
+            wizardCurrentStep = 1;
+            updateWizardStepUI();
+            document.getElementById('wizardModal').classList.remove('hidden');
+        }
+
+        function openWizardForBank(bankOptionStr) {
+            openWizardModal();
+            const select = document.getElementById('stepBank');
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].value.includes(bankOptionStr) || bankOptionStr.includes(select.options[i].text)) {
+                    select.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        function closeWizardModal() {
+            document.getElementById('wizardModal').classList.add('hidden');
+        }
+
+        function navigateWizard(dir) {
+            wizardCurrentStep += dir;
+            if (wizardCurrentStep < 1) wizardCurrentStep = 1;
+            if (wizardCurrentStep > 4) wizardCurrentStep = 4;
+            updateWizardStepUI();
+        }
+
+        function updateWizardStepUI() {
+            // Hide all steps
+            document.getElementById('wizardStep1').classList.add('hidden');
+            document.getElementById('wizardStep2').classList.add('hidden');
+            document.getElementById('wizardStep3').classList.add('hidden');
+            document.getElementById('wizardStep4').classList.add('hidden');
+
+            // Progress bar and indicators
+            const progressBar = document.getElementById('progressBar');
+            const stepIndicator = document.getElementById('stepIndicator');
+            const stepPercent = document.getElementById('stepPercent');
+
+            const btnPrev = document.getElementById('btnPrev');
+            const btnNext = document.getElementById('btnNext');
+            const btnFinish = document.getElementById('btnFinish');
+
+            if (wizardCurrentStep === 1) {
+                document.getElementById('wizardStep1').classList.remove('hidden');
+                stepIndicator.innerText = 'Passo 1 de 4: Escolha do Banco e Canal';
+                stepPercent.innerText = '25%';
+                progressBar.style.width = '25%';
+                btnPrev.classList.add('hidden');
+                btnNext.classList.remove('hidden');
+                btnFinish.classList.add('hidden');
+            } else if (wizardCurrentStep === 2) {
+                document.getElementById('wizardStep2').classList.remove('hidden');
+                stepIndicator.innerText = 'Passo 2 de 4: Categoria de Problema';
+                stepPercent.innerText = '50%';
+                progressBar.style.width = '50%';
+                btnPrev.classList.remove('hidden');
+                btnNext.classList.remove('hidden');
+                btnFinish.classList.add('hidden');
+            } else if (wizardCurrentStep === 3) {
+                document.getElementById('wizardStep3').classList.remove('hidden');
+                stepIndicator.innerText = 'Passo 3 de 4: Dados da Transação';
+                stepPercent.innerText = '75%';
+                progressBar.style.width = '75%';
+                btnPrev.classList.remove('hidden');
+                btnNext.classList.remove('hidden');
+                btnFinish.classList.add('hidden');
+            } else if (wizardCurrentStep === 4) {
+                document.getElementById('wizardStep4').classList.remove('hidden');
+                stepIndicator.innerText = 'Passo 4 de 4: Confirmação & Protocolo';
+                stepPercent.innerText = '100%';
+                progressBar.style.width = '100%';
+                btnPrev.classList.add('hidden');
+                btnNext.classList.add('hidden');
+                btnFinish.classList.remove('hidden');
+
+                // Generate protocol summary info
+                generateProtocolSummary();
+            }
+        }
+
+        function handleFileSelect(input) {
+            const display = document.getElementById('fileNameDisplay');
+            if (input.files && input.files[0]) {
+                display.innerText = `Arquivo anexado: ${input.files[0].name}`;
+            }
+        }
+
+        function generateProtocolSummary() {
+            const bankVal = document.getElementById('stepBank').value;
+            const amountVal = parseFloat(document.getElementById('stepAmount').value) || 0;
+            const randomProto = 'PROTO-2026-' + Math.floor(1000 + Math.random() * 9000);
+
+            // Compute 10 business days deadline
+            const now = new Date();
+            now.setDate(now.getDate() + 14); // approximate 10 business days
+            const deadlineStr = now.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+
+            document.getElementById('resProtocolNum').innerText = randomProto;
+            document.getElementById('resBankName').innerText = bankVal;
+            document.getElementById('resValueDisplay').innerText = `R$ ${amountVal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('resDeadline').innerText = `${deadlineStr} (10 dias úteis)`;
+
+            // Save to LocalStorage
+            saveProtocolToStorage({
+                id: randomProto,
+                bank: bankVal,
+                amount: amountVal,
+                date: new Date().toLocaleDateString('pt-BR'),
+                status: 'Em Análise',
+                deadline: deadlineStr
+            });
+        }
+
+        function finishWizard() {
+            closeWizardModal();
+            renderProtocolList('all');
+            document.getElementById('meus-protocolos').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function getStoredProtocols() {
+            const data = localStorage.getItem('fin_suporte_protocolos');
+            if (!data) {
+                // Initial mock protocols
+                const initial = [
+                    {
+                        id: 'PROTO-2026-8841',
+                        bank: 'Nubank (Compe 260)',
+                        amount: 450.00,
+                        date: '25/09/2026',
+                        status: 'Em Análise',
+                        deadline: '08 de Outubro de 2026'
+                    },
+                    {
+                        id: 'PROTO-2026-3102',
+                        bank: 'Banco Santander (Compe 033)',
+                        amount: 1200.00,
+                        date: '10/09/2026',
+                        status: 'Reembolsado',
+                        deadline: '24 de Setembro de 2026'
+                    }
+                ];
+                localStorage.setItem('fin_suporte_protocolos', JSON.stringify(initial));
+                return initial;
+            }
+            return JSON.parse(data);
+        }
+
+        function saveProtocolToStorage(newProto) {
+            const list = getStoredProtocols();
+            list.unshift(newProto);
+            localStorage.setItem('fin_suporte_protocolos', JSON.stringify(list));
+            updateChamadosBadge();
+        }
+
+        function updateChamadosBadge() {
+            const list = getStoredProtocols();
+            const badge = document.getElementById('chamadosBadge');
+            if (list.length > 0) {
+                badge.innerText = list.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function renderProtocolList(filterStatus = 'all') {
+            const container = document.getElementById('protocolListContainer');
+            const list = getStoredProtocols();
+
+            const filtered = list.filter(item => {
+                if (filterStatus === 'all') return true;
+                return item.status === filterStatus;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="p-8 text-center text-zinc-500 bg-zinc-950 rounded-2xl border border-zinc-800">
+                        <p class="text-xs">Nenhum chamado encontrado nesta categoria.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            filtered.forEach(item => {
+                let badgeStyle = 'bg-amber-500/20 text-amber-400 border-amber-500/30';
+                if (item.status === 'Reembolsado' || item.status === 'Aprovado') {
+                    badgeStyle = 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
+                }
+
+                const card = document.createElement('div');
+                card.className = 'bg-zinc-950 border border-zinc-800 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4';
+                card.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="font-mono font-bold text-xs text-emerald-400">${item.id}</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded border font-semibold ${badgeStyle}">${item.status}</span>
+                        </div>
+                        <p class="text-xs font-semibold text-white">${item.bank}</p>
+                        <p class="text-[11px] text-zinc-400">Data Registro: ${item.date} | Prazo Estimado BACEN: ${item.deadline}</p>
+                    </div>
+
+                    <div class="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 border-zinc-800/80 pt-2 sm:pt-0">
+                        <div class="text-right">
+                            <p class="text-[10px] text-zinc-400">Valor Reclamado</p>
+                            <p class="text-sm font-extrabold text-white">R$ ${parseFloat(item.amount).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
+                        </div>
+                        <button onclick="copyProtocolNumber('${item.id}')" class="bg-zinc-900 hover:bg-zinc-800 text-zinc-300 p-2 rounded-xl border border-zinc-800 text-xs">
+                            Copiar ID
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function copyProtocolNumber(idStr) {
+            const temp = document.createElement('textarea');
+            temp.value = idStr;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            alert(`Número de protocolo ${idStr} copiado!`);
+        }
+
+        function toggleChatBox() {
+            const chatBox = document.getElementById('chatBox');
+            chatBox.classList.toggle('hidden');
+        }
+
+        function openChatWithBank(bankName) {
+            const chatBox = document.getElementById('chatBox');
+            chatBox.classList.remove('hidden');
+            appendChatMessage('bot', `Iniciando atendimento especializado para contestação de transações no **${bankName}**. Qual valor você precisa reembolsar?`);
+        }
+
+        function toggleAudioSound() {
+            isAudioEnabled = !isAudioEnabled;
+            const btn = document.getElementById('soundBtn');
+            btn.classList.toggle('text-emerald-400', isAudioEnabled);
+            btn.classList.toggle('text-zinc-600', !isAudioEnabled);
+        }
+
+        function playNotificationSound() {
+            if (!isAudioEnabled) return;
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12); // A5
+
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.2);
+            } catch (e) {
+                console.log('Audio Context restricted until user interaction');
+            }
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            appendChatMessage('user', text);
+            input.value = '';
+
+            // Simulate assistant response
+            setTimeout(() => {
+                handleBotResponse(text);
+            }, 800);
+        }
+
+        function sendQuickOption(optText) {
+            appendChatMessage('user', optText);
+            setTimeout(() => {
+                handleBotResponse(optText);
+            }, 700);
+        }
+
+        function appendChatMessage(sender, message) {
+            const chatLog = document.getElementById('chatLog');
+            const msgDiv = document.createElement('div');
+
+            if (sender === 'user') {
+                msgDiv.className = 'flex justify-end';
+                msgDiv.innerHTML = `
+                    <div class="bg-emerald-500 text-zinc-950 font-medium p-3 rounded-2xl rounded-tr-none max-w-[80%] text-xs shadow-md">
+                        ${message}
+                    </div>
+                `;
+            } else {
+                msgDiv.className = 'flex gap-2.5';
+                msgDiv.innerHTML = `
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=100&q=80" class="w-7 h-7 rounded-full object-cover">
+                    <div class="bg-zinc-950 border border-zinc-800 p-3 rounded-2xl rounded-tl-none max-w-[80%] text-zinc-200">
+                        ${message}
+                    </div>
+                `;
+                playNotificationSound();
+            }
+
+            chatLog.appendChild(msgDiv);
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+
+        function handleBotResponse(userMsg) {
+            const lower = userMsg.toLowerCase();
+            let botReply = "Entendi sua dúvida. Para acionar a análise imediata, recomendo abrir um protocolo clicando no botão 'Abrir Reembolso' no menu superior.";
+
+            if (lower.includes('med') || lower.includes('pix')) {
+                botReply = "O **Mecanismo Especial de Devolução (MED)** permite bloquear valores de PIX em caso de fraude em até 80 dias. Deseja iniciar a abertura de protocolo MED agora?";
+            } else if (lower.includes('dobro') || lower.includes('cobrança') || lower.includes('tarifa')) {
+                botReply = "Nos termos do **Art. 42 do Código de Defesa do Consumidor**, cobranças indevidas de tarifas não contratadas devem ser restituídas em DOBRO + juros. Utilize nossa calculadora na página para ver o valor exato!";
+            } else if (lower.includes('humano') || lower.includes('atendente')) {
+                botReply = "Estou transferindo você para nossa equipe humana de contestações bancárias. Enquanto isso, você pode pré-preencher o formulário no assistente.";
+            }
+
+            appendChatMessage('bot', botReply);
+        }
+
+        window.onload = function () {
+            renderBankGrid();
+            calculateDoubleRefund();
+            updateNotificationPreview();
+            renderProtocolList('all');
+            updateChamadosBadge();
+        };
+    </script>
+</body>
+</html>
